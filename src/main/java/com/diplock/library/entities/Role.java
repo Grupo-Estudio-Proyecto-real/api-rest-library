@@ -1,15 +1,14 @@
 package com.diplock.library.entities;
 
-
-import com.diplock.library.entities.enums.ERole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,11 +23,14 @@ import lombok.NoArgsConstructor;
 public class Role {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "role_id")
-  private Long roleId;
+  @Column(name = "name", length = 15, nullable = false, unique = true)
+  private String name;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "name", unique = true)
-  private ERole name;
+  @Column(name = "description", length = 50)
+  private String description;
+
+  @OneToMany(mappedBy = "role", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = false)
+  @JsonIgnore
+  private List<User> userList;
+  
 }

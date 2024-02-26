@@ -1,13 +1,20 @@
 package com.diplock.library.dtos;
 
+import com.diplock.library.entities.Role;
 import java.util.Set;
 import lombok.Data;
 
 @Data
 public class UserDTO {
-  private Long idUser;
+
+  private Long userId;
+
   private String username;
+
   private String email;
+
   private String password;
-  private Set<String> roles;
+
+  private Role role;
+
 }

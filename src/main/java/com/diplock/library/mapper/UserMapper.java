@@ -17,34 +17,21 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 
-@Mapper(componentModel = ComponentModel.SPRING)
+//@Mapper(componentModel = ComponentModel.SPRING)
+@Mapper
 public interface UserMapper {
 
-  @Mapping(source = "roles", target = "roles", qualifiedByName="toStrings")
-  @Mapping(target = "password", ignore = true)
+  //@Mapping(source = "roles", target = "roles", qualifiedByName="toStrings")
+  //@Mapping(target = "password", ignore = true)
   UserDTO asDto(User user);
 
-  @InheritInverseConfiguration
-  @Mapping(target = "roles", ignore = true)
+  //@InheritInverseConfiguration
+  //@Mapping(target = "roles", ignore = true)
   User asEntity(UserDh userDh);
 
   List<UserDTO> asDtoList (List<User> users);
 
   List<User> asEntityList (List<UserDh> userDhList);
-  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-  @Mapping(target = "roles", ignore = true)
-  void update(UserDh userDh, @MappingTarget User user);
 
-
-  @Named("toStrings")
-  static Set<String> mapToStrings(Set<Role> roles) {
-    Set<String> roleNames = new HashSet<>();
-    if (roles != null) {
-      for (Role role : roles) {
-        roleNames.add(role.getName().toString());
-      }
-    }
-    return roleNames;
-  }
 
 }

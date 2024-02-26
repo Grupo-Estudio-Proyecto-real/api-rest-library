@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-02-12T20:42:49+0100",
+    date = "2024-02-14T18:27:47+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.9 (Amazon.com Inc.)"
 )
 @Component
@@ -24,9 +24,11 @@ public class UserMapperImpl implements UserMapper {
 
         UserDTO userDTO = new UserDTO();
 
-        userDTO.setRoles( UserMapper.mapToStrings( user.getRoles() ) );
+        userDTO.setUserId( user.getUserId() );
         userDTO.setUsername( user.getUsername() );
         userDTO.setEmail( user.getEmail() );
+        userDTO.setPassword( user.getPassword() );
+        userDTO.setRole( user.getRole() );
 
         return userDTO;
     }
@@ -39,9 +41,11 @@ public class UserMapperImpl implements UserMapper {
 
         User.UserBuilder user = User.builder();
 
+        user.userId( userDh.getUserId() );
         user.username( userDh.getUsername() );
         user.email( userDh.getEmail() );
         user.password( userDh.getPassword() );
+        user.role( userDh.getRole() );
 
         return user.build();
     }
@@ -72,22 +76,5 @@ public class UserMapperImpl implements UserMapper {
         }
 
         return list;
-    }
-
-    @Override
-    public void update(UserDh userDh, User user) {
-        if ( userDh == null ) {
-            return;
-        }
-
-        if ( userDh.getUsername() != null ) {
-            user.setUsername( userDh.getUsername() );
-        }
-        if ( userDh.getEmail() != null ) {
-            user.setEmail( userDh.getEmail() );
-        }
-        if ( userDh.getPassword() != null ) {
-            user.setPassword( userDh.getPassword() );
-        }
     }
 }

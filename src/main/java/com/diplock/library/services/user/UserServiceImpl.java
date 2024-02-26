@@ -4,7 +4,6 @@ import com.diplock.library.dataholders.UserDh;
 import com.diplock.library.dtos.UserDTO;
 import com.diplock.library.entities.Role;
 import com.diplock.library.entities.User;
-import com.diplock.library.entities.enums.ERole;
 import com.diplock.library.exceptions.BdNotFoundException;
 import com.diplock.library.exceptions.BdNotSaveException;
 import com.diplock.library.mapper.UserMapper;
@@ -42,22 +41,22 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<UserDTO> findALl() {
 
-    final List<User> users = (List<User>) this.userRepository.findAll();
+    final List<User> users = (List<User>) userRepository.findAll();
 
     if (CollectionUtils.isEmpty(users)) {
       log.warn("There are no users in the database");
       return Collections.emptyList();
     }
 
-    return this.userMapper.asDtoList(users);
+    return userMapper.asDtoList(users);
   }
 
   @Override
   public UserDTO findById(final Long id) {
-    final Optional<User> user = this.userRepository.findById(id);
+    final Optional<User> user = userRepository.findById(id);
 
     if (user.isPresent()) {
-      return this.userMapper.asDto(user.get());
+      return userMapper.asDto(user.get());
     } else {
       throw new BdNotFoundException("GET - There is no user in the database with the id: " + id);
     }
@@ -66,10 +65,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDTO save(final UserDh userDh) {
     bdParser.Evaluator(userDh, "POST");
-    final User user = this.userMapper.asEntity(userDh);
-    user.setRoles(getRolesFromNames(userDh.getRoles()));
 
-    final User userSaved = this.userRepository.save(user);
+    final User user = userMapper.asEntity(userDh);
+
+    final User userSaved = userRepository.save(user);
 
     return this.userMapper.asDto(userSaved);
   }
@@ -79,16 +78,15 @@ public class UserServiceImpl implements UserService {
   public UserDTO update(Long id, UserDh userDh) {
 
     bdParser.Evaluator(userDh, "PUT");
-    if (userDh.getIdUser() != id) {
-      throw new BdNotSaveException("PUT - Parameters are incorrect for field userId: " + userDh.getIdUser() + " is different at id: " + id);
+    if (userDh.getUserId() != id) {
+      throw new BdNotSaveException("PUT - Parameters are incorrect for field userId: " + userDh.getUserId() + " is different at id: " + id);
     }
 
-    final User user = this.userMapper.asEntity(userDh); // Remember that it ignores mapping for "roles"
-    final boolean existsUser = this.userRepository.existsById(id);
+    final User user = userMapper.asEntity(userDh);
+    final boolean existsUser = userRepository.existsById(id);
 
     if (existsUser) {
-      user.setRoles(getRolesFromNames(userDh.getRoles())); // Receive a Set<String>
-      final User userSaved = this.userRepository.save(user);
+      final User userSaved = userRepository.save(user);
 
       return userMapper.asDto(user);
     }
@@ -100,8 +98,8 @@ public class UserServiceImpl implements UserService {
   public UserDTO updateById(Long id, UserDh userDh) {
 
     bdParser.Evaluator(userDh, "PUT");
-    if (userDh.getIdUser() != id) {
-      throw new BdNotSaveException("PUT - Parameters are incorrect for field userId: " + userDh.getIdUser() + " is different at id: " + id);
+    if (userDh.getUserId() != id) {
+      throw new BdNotSaveException("PUT - Parameters are incorrect for field userId: " + userDh.getUserId() + " is different at id: " + id);
     }
 
     Optional<User> optionalUser = userRepository.findById(id);
@@ -109,11 +107,6 @@ public class UserServiceImpl implements UserService {
 
     if (existsUser) {
       User user = optionalUser.get();
-
-      userMapper.update(userDh, user);
-      if(userDh.getRoles() != null) {
-        user.setRoles(getRolesFromNames(userDh.getRoles()));
-      }
 
       User updatedUser = userRepository.save(user);
 
@@ -134,17 +127,4 @@ public class UserServiceImpl implements UserService {
 
     throw new BdNotFoundException("DELETE - There is no user in the database with the id: " + id);
   }
-
-
-  private Set<Role> getRolesFromNames(final Set<String> roleNames) {
-    return roleNames.stream()
-      .map(name -> this.roleRepository.findByName(ERole.valueOf(name))
-        .orElseGet(() -> {
-          final Role newRole = new Role();
-          newRole.setName(ERole.valueOf(name));
-          return newRole;
-        }))
-      .collect(Collectors.toSet());
-  }
-
 }

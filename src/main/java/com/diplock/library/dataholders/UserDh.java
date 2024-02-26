@@ -1,14 +1,21 @@
 package com.diplock.library.dataholders;
 
-import java.util.Set;
+import com.diplock.library.entities.Role;
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class UserDh {
-  private Long idUser;
+
+  private Long userId;
+
   private String username;
+
   private String email;
+
   private String password;
-  private Set<String> roles;
+
+  private Role role;
+
 }
 

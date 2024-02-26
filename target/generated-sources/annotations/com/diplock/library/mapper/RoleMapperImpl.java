@@ -3,7 +3,7 @@ package com.diplock.library.mapper;
 import com.diplock.library.dataholders.RoleDh;
 import com.diplock.library.dtos.RoleDTO;
 import com.diplock.library.entities.Role;
-import com.diplock.library.entities.enums.ERole;
+import com.diplock.library.entities.User;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-02-12T20:42:49+0100",
+    date = "2024-02-14T18:27:47+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.9 (Amazon.com Inc.)"
 )
 @Component
@@ -25,9 +25,11 @@ public class RoleMapperImpl implements RoleMapper {
 
         RoleDTO roleDTO = new RoleDTO();
 
-        roleDTO.setRoleId( role.getRoleId() );
-        if ( role.getName() != null ) {
-            roleDTO.setName( role.getName().name() );
+        roleDTO.setName( role.getName() );
+        roleDTO.setDescription( role.getDescription() );
+        List<User> list = role.getUserList();
+        if ( list != null ) {
+            roleDTO.setUserList( new ArrayList<User>( list ) );
         }
 
         return roleDTO;
@@ -41,9 +43,11 @@ public class RoleMapperImpl implements RoleMapper {
 
         Role.RoleBuilder role = Role.builder();
 
-        role.roleId( roleDh.getRoleId() );
-        if ( roleDh.getName() != null ) {
-            role.name( Enum.valueOf( ERole.class, roleDh.getName() ) );
+        role.name( roleDh.getName() );
+        role.description( roleDh.getDescription() );
+        List<User> list = roleDh.getUserList();
+        if ( list != null ) {
+            role.userList( new ArrayList<User>( list ) );
         }
 
         return role.build();
